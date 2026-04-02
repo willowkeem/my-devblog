@@ -94,4 +94,4 @@ scp -i "~/path/to/my key.pem" index.html ubuntu@54.246.17.88:/var/www/html/
 
 ---
 
-*Built by Willow Kim · Software Development student (Higher Diploma, NFQ Level 8)*
+*Built by Willow Kim*
