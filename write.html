@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Write Post — Willow Kim</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --border: #e7e5e4;
+      --text: #1c1917;
+      --muted: #78716c;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --font: 'Georgia', 'Times New Roman', serif;
+      --mono: 'Courier New', Courier, monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title a {
+      font-size: 1.5rem;
+      font-weight: normal;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      font-family: var(--font);
+    }
+    .header-title a:hover { color: var(--accent); text-decoration: none; }
+    .header-title p { font-size: 0.875rem; color: var(--muted); font-family: sans-serif; margin-top: 0.2rem; }
+
+    .page-badge {
+      font-family: sans-serif; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); background: #f5f5f4;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+    }
+
+    /* ── Write page ── */
+    .write-header { padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); }
+
+    .write-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .back-btn {
+      font-family: sans-serif; font-size: 0.8rem; color: var(--muted);
+      background: none; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0; text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    .write-header h2 { font-size: 1.4rem; font-weight: normal; }
+    .write-header p { font-size: 0.875rem; color: var(--muted); margin-top: 0.4rem; font-family: sans-serif; }
+
+    /* ── Form ── */
+    .write-form { padding: 2.5rem 0 5rem; }
+
+    .form-group { margin-bottom: 1.75rem; }
+
+    .form-group label {
+      display: block;
+      font-family: sans-serif; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.55rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      line-height: 1.6;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      resize: vertical;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    #post-title { font-size: 1.25rem; }
+
+    #post-content {
+      font-family: var(--mono);
+      font-size: 0.875rem;
+      line-height: 1.75;
+      min-height: 460px;
+    }
+
+    /* ── Markdown cheatsheet ── */
+    .cheatsheet {
+      margin-top: 0.75rem;
+      background: #f5f5f4;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+    }
+    .cheatsheet-title {
+      font-family: sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.6rem;
+    }
+    .cheatsheet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.3rem 1.5rem;
+    }
+    .cheatsheet-row {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+    .cheatsheet-row code {
+      color: #c2410c;
+      background: #fef3c7;
+      padding: 0.05em 0.3em;
+      border-radius: 3px;
+      font-size: 0.7rem;
+    }
+    .cheatsheet-row span { color: var(--muted); font-size: 0.7rem; }
+
+    /* ── Actions ── */
+    .form-actions {
+      display: flex; gap: 1rem; align-items: center;
+      padding-top: 0.5rem;
+    }
+
+    .btn-publish {
+      font-family: sans-serif; font-size: 0.9rem; font-weight: 600;
+      color: #fff; background: var(--accent);
+      border: none; border-radius: 6px;
+      padding: 0.65rem 1.75rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-publish:hover { background: #1d4ed8; }
+    .btn-publish:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-cancel {
+      font-family: sans-serif; font-size: 0.9rem;
+      color: var(--muted); background: none;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.65rem 1.25rem; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--muted); color: var(--text); text-decoration: none; }
+
+    /* ── Delete button (edit mode only) ── */
+    .btn-delete {
+      font-family: sans-serif; font-size: 0.85rem;
+      color: #ef4444; background: none;
+      border: 1px solid #fecaca; border-radius: 6px;
+      padding: 0.65rem 1.1rem; cursor: pointer;
+      margin-left: auto;
+      transition: background 0.15s;
+    }
+    .btn-delete:hover { background: #fef2f2; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: #1c1917; color: #fff;
+      font-family: sans-serif; font-size: 0.85rem;
+      padding: 0.7rem 1.5rem; border-radius: 8px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2rem 0; text-align: center;
+      font-family: sans-serif; font-size: 0.8rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .cheatsheet-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="header-title">
+          <a href="index.html">Willow Kim</a>
+          <p>Aspiring Software Developer &mdash; documenting the journey</p>
+        </div>
+        <span class="page-badge" id="page-badge">New Post</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="write-header">
+      <div class="container">
+        <div class="write-nav">
+          <a class="back-btn" href="index.html">← Back to Blog</a>
+        </div>
+        <h2 id="page-title">New Post</h2>
+        <p>Markdown formatting is supported. Your changes are auto-saved as a draft.</p>
+      </div>
+    </div>
+
+    <div class="write-form">
+      <div class="container">
+        <div class="form-group">
+          <label for="post-title">Title</label>
+          <input type="text" id="post-title" placeholder="Enter post title…" />
+        </div>
+
+        <div class="form-group">
+          <label for="post-category">Category</label>
+          <input type="text" id="post-category" placeholder="e.g. AWS · DevOps" />
+        </div>
+
+        <div class="form-group">
+          <label for="post-content">Content</label>
+          <textarea id="post-content" placeholder="Write your post here…
+
+## Start with a heading
+
+Your content here. Supports **bold**, *italic*, `inline code`, lists, code blocks, and more."></textarea>
+
+          <div class="cheatsheet">
+            <div class="cheatsheet-title">Markdown Reference</div>
+            <div class="cheatsheet-grid">
+              <div class="cheatsheet-row"><code>## Heading</code><span>Section heading</span></div>
+              <div class="cheatsheet-row"><code>### Sub-heading</code><span>Sub-section</span></div>
+              <div class="cheatsheet-row"><code>**bold**</code><span>Bold text</span></div>
+              <div class="cheatsheet-row"><code>*italic*</code><span>Italic text</span></div>
+              <div class="cheatsheet-row"><code>`code`</code><span>Inline code</span></div>
+              <div class="cheatsheet-row"><code>- item</code><span>Bullet list</span></div>
+              <div class="cheatsheet-row"><code>1. item</code><span>Numbered list</span></div>
+              <div class="cheatsheet-row"><code>> quote</code><span>Blockquote</span></div>
+              <div class="cheatsheet-row"><code>```</code><span>Code block (wrap)</span></div>
+              <div class="cheatsheet-row"><code>---</code><span>Horizontal rule</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-publish" id="btn-publish" onclick="submitPost()">Publish</button>
+          <a class="btn-cancel" href="index.html">Cancel</a>
+          <button class="btn-delete" id="btn-delete" style="display:none" onclick="deletePost()">Delete Post</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Willow Kim</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Default posts (must match index.html) ─────────────────────
+    const DEFAULT_POSTS = [
+      {
+        id: '1',
+        title: 'Setting Up a Web Server on AWS EC2 with Nginx',
+        category: 'AWS · DevOps',
+        date: '2026-03-15',
+        content: `## Overview
+
+In this post I'll walk through everything I did to get a working web server running on AWS EC2 with Nginx. This was my first real hands-on AWS project and I learned a lot, especially from the mistakes.
+
+## Step 1: Launch an EC2 Instance
+
+Log in to the AWS Management Console and navigate to **EC2 > Instances > Launch Instance**.
+
+- Choose **Ubuntu 22.04 LTS** as the AMI
+- Select **t2.micro** (free tier eligible)
+- Create a new key pair and download the \`.pem\` file — keep this safe, you can't re-download it
+- Under **Network settings**, allow SSH (port 22) and HTTP (port 80)
+
+## Step 2: Connect via SSH
+
+Once the instance is running, copy the Public IPv4 address. Then from your terminal:
+
+\`\`\`
+chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@<PUBLIC_IP>
+\`\`\`
+
+## Step 3: Install Nginx
+
+Once connected, update the package list and install Nginx:
+
+\`\`\`
+sudo apt update
+sudo apt install nginx -y
+\`\`\`
+
+Start and enable Nginx so it runs on boot:
+
+\`\`\`
+sudo systemctl start nginx
+sudo systemctl enable nginx
+\`\`\`
+
+Visit \`http://<PUBLIC_IP>\` in your browser — you should see the Nginx welcome page.
+
+## Gotchas I Hit
+
+- **Security Group rules**: I initially forgot to add an inbound rule for HTTP (port 80). The instance was running but the browser just timed out. Always double-check your Security Group.
+- **Key pair permissions**: SSH refused to connect until I ran \`chmod 400\` on the \`.pem\` file. Permissions matter on Linux.
+- **Public IP changes on restart**: Free-tier EC2 instances get a new public IP every time you stop and start them. For a permanent address, look into **Elastic IPs**.
+
+## Next Steps
+
+- Configure Nginx to serve a custom HTML page
+- Point a domain name to the instance using Route 53
+- Set up HTTPS with Let's Encrypt (Certbot)
+
+Overall this was a great intro to AWS. The console can be overwhelming at first but once you know where things are it flows pretty naturally.`
+      },
+      {
+        id: '2',
+        title: "What is Linux and Ubuntu? A Beginner's Notes",
+        category: 'Linux · Fundamentals',
+        date: '2026-02-20',
+        content: `## What is Linux?
+
+Linux is an open-source **operating system kernel** created by Linus Torvalds in 1991. A kernel is the core of an OS — it manages hardware resources (CPU, memory, storage) and lets software programs talk to the hardware.
+
+Unlike Windows or macOS, Linux is free and open-source. Anyone can read its source code, modify it, and distribute it.
+
+## What is Ubuntu?
+
+Ubuntu is a **Linux distribution** (or "distro") — a complete operating system built on top of the Linux kernel. It bundles the kernel together with:
+
+- A package manager (\`apt\`) for installing software
+- A desktop environment (GNOME by default)
+- Pre-installed utilities and tools
+
+Ubuntu is one of the most beginner-friendly distros and is widely used on servers (including most cloud platforms like AWS and GCP).
+
+## Key Concepts I Needed to Learn
+
+### The File System
+
+Linux uses a single directory tree starting at \`/\` (root). There are no drive letters like \`C:\`. Key directories:
+
+- \`/home\` — user home directories
+- \`/etc\` — system configuration files
+- \`/var\` — variable data (logs, databases)
+- \`/usr\` — user-installed programs
+- \`/tmp\` — temporary files (cleared on reboot)
+
+### Permissions
+
+Every file has an **owner** and **group**, plus permission bits for read (\`r\`), write (\`w\`), and execute (\`x\`). The output of \`ls -l\` shows these:
+
+\`\`\`
+-rw-r--r-- 1 ubuntu ubuntu 1234 Mar 01 10:00 myfile.txt
+\`\`\`
+
+Three groups: owner / group / others. \`chmod\` changes permissions, \`chown\` changes ownership.
+
+### Package Management with apt
+
+\`apt\` is Ubuntu's package manager. The commands I use most:
+
+\`\`\`
+sudo apt update          # refresh package list
+sudo apt install <pkg>   # install a package
+sudo apt upgrade         # upgrade installed packages
+sudo apt remove <pkg>    # remove a package
+\`\`\`
+
+### Processes
+
+- \`ps aux\` — list all running processes
+- \`top\` / \`htop\` — real-time process monitor
+- \`kill <PID>\` — stop a process by its ID
+- \`systemctl status nginx\` — check if a service is running
+
+## Why This Matters for Cloud / DevOps
+
+Almost all cloud servers run Linux. Understanding the file system, permissions, and the terminal is non-negotiable for deploying applications. Starting to feel more comfortable in the terminal has made everything else — EC2, Docker, CI/CD — much less intimidating.`
+      }
+    ];
+
+    // ── Storage helpers ────────────────────────────────────────────
+    function loadPosts() {
+      try {
+        const stored = localStorage.getItem('blog_posts');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+      // Persist defaults on first load
+      savePosts(DEFAULT_POSTS);
+      return DEFAULT_POSTS;
+    }
+
+    function savePosts(posts) {
+      localStorage.setItem('blog_posts', JSON.stringify(posts));
+    }
+
+    // ── URL params ─────────────────────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get('id');
+    let posts = loadPosts();
+    let editingPost = null;
+
+    // ── Init ───────────────────────────────────────────────────────
+    if (editId) {
+      editingPost = posts.find(p => p.id === editId);
+      if (editingPost) {
+        document.getElementById('page-title').textContent = 'Edit Post';
+        document.getElementById('page-badge').textContent = 'Edit Post';
+        document.getElementById('btn-publish').textContent = 'Save Changes';
+        document.getElementById('btn-delete').style.display = 'inline-block';
+        document.getElementById('post-title').value = editingPost.title;
+        document.getElementById('post-category').value = editingPost.category;
+        document.getElementById('post-content').value = editingPost.content;
+      }
+    }
+
+    // ── Auto-save draft ────────────────────────────────────────────
+    const DRAFT_KEY = 'blog_draft';
+
+    if (!editId) {
+      // Load draft only for new posts
+      try {
+        const draft = JSON.parse(localStorage.getItem(DRAFT_KEY));
+        if (draft) {
+          if (draft.title) document.getElementById('post-title').value = draft.title;
+          if (draft.category) document.getElementById('post-category').value = draft.category;
+          if (draft.content) document.getElementById('post-content').value = draft.content;
+        }
+      } catch (e) {}
+    }
+
+    let draftTimer;
+    function scheduleDraftSave() {
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        if (editId) return; // don't auto-save draft when editing
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          title: document.getElementById('post-title').value,
+          category: document.getElementById('post-category').value,
+          content: document.getElementById('post-content').value,
+        }));
+      }, 1000);
+    }
+
+    document.getElementById('post-title').addEventListener('input', scheduleDraftSave);
+    document.getElementById('post-category').addEventListener('input', scheduleDraftSave);
+    document.getElementById('post-content').addEventListener('input', scheduleDraftSave);
+
+    // ── Publish / Save ─────────────────────────────────────────────
+    function submitPost() {
+      const title = document.getElementById('post-title').value.trim();
+      const category = document.getElementById('post-category').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+
+      if (!title) {
+        showToast('Please enter a title.');
+        document.getElementById('post-title').focus();
+        return;
+      }
+      if (!content) {
+        showToast('Please write some content.');
+        document.getElementById('post-content').focus();
+        return;
+      }
+
+      posts = loadPosts(); // re-read in case another tab updated
+
+      if (editingPost) {
+        // Update existing post
+        const idx = posts.findIndex(p => p.id === editId);
+        if (idx !== -1) {
+          posts[idx] = { ...posts[idx], title, category: category || 'General', content };
+        }
+        savePosts(posts);
+        showToast('Post updated!');
+        setTimeout(() => { window.location.href = 'index.html#post-' + editId; }, 800);
+      } else {
+        // New post
+        const newId = String(Date.now());
+        const newPost = {
+          id: newId,
+          title,
+          category: category || 'General',
+          date: new Date().toISOString().slice(0, 10),
+          content,
+        };
+        posts.push(newPost);
+        savePosts(posts);
+        localStorage.removeItem(DRAFT_KEY); // clear draft
+        showToast('Post published!');
+        setTimeout(() => { window.location.href = 'index.html#post-' + newId; }, 800);
+      }
+    }
+
+    // ── Delete ─────────────────────────────────────────────────────
+    function deletePost() {
+      if (!editId) return;
+      if (!confirm('Delete this post? This cannot be undone.')) return;
+      posts = loadPosts();
+      const updated = posts.filter(p => p.id !== editId);
+      savePosts(updated);
+      window.location.href = 'index.html';
+    }
+
+    // ── Toast helper ───────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // ── Keyboard shortcut: Cmd/Ctrl+Enter to publish ───────────────
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        submitPost();
+      }
+    });
+  </script>
+</body>
+</html>

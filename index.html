@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Willow Kim — Dev Blog</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --border: #e7e5e4;
+      --text: #1c1917;
+      --muted: #78716c;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --font: 'Georgia', 'Times New Roman', serif;
+      --mono: 'Courier New', Courier, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+    section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h1 { font-size: 1.5rem; font-weight: normal; letter-spacing: -0.01em; cursor: pointer; }
+    .header-title h1:hover { color: var(--accent); }
+    .header-title p { font-size: 0.875rem; color: var(--muted); font-family: sans-serif; margin-top: 0.2rem; }
+
+    .header-right { display: flex; align-items: center; gap: 1.5rem; }
+
+    nav { display: flex; gap: 1.5rem; }
+    nav a { font-size: 0.875rem; font-family: sans-serif; color: var(--muted); transition: color 0.15s; }
+    nav a:hover { color: var(--accent); text-decoration: none; }
+
+    .btn-write {
+      font-family: sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--surface);
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-write:hover { background: #1d4ed8; }
+
+    /* ── About ── */
+    #about h2 {
+      font-size: 0.75rem; font-family: sans-serif; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.5rem;
+    }
+    #about p { color: var(--text); margin-bottom: 1rem; }
+    #about p:last-child { margin-bottom: 0; }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+    .tag {
+      font-family: var(--mono); font-size: 0.75rem;
+      background: var(--accent-light); color: var(--accent);
+      padding: 0.25rem 0.6rem; border-radius: 4px;
+    }
+
+    /* ── Blog list ── */
+    #blog h2 {
+      font-size: 0.75rem; font-family: sans-serif; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 2rem;
+    }
+
+    .post-list { display: flex; flex-direction: column; gap: 2rem; }
+
+    .post-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.75rem;
+      transition: box-shadow 0.15s; cursor: pointer;
+    }
+    .post-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+    .post-meta {
+      font-family: sans-serif; font-size: 0.75rem; color: var(--muted);
+      margin-bottom: 0.6rem; display: flex; gap: 1rem; align-items: center;
+    }
+    .post-category {
+      background: var(--accent-light); color: var(--accent);
+      padding: 0.15rem 0.5rem; border-radius: 3px;
+      font-size: 0.7rem; font-family: var(--mono);
+    }
+
+    .post-card h3 { font-size: 1.15rem; margin-bottom: 0.75rem; line-height: 1.4; }
+    .post-card h3 a { color: var(--text); }
+    .post-card h3 a:hover { color: var(--accent); text-decoration: none; }
+    .post-card p { font-size: 0.95rem; color: var(--muted); margin-bottom: 1rem; }
+
+    .read-more {
+      font-family: sans-serif; font-size: 0.8rem; font-weight: 600;
+      color: var(--accent); display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .read-more::after { content: '→'; }
+
+    /* ── Post detail ── */
+    #view-post { display: none; }
+
+    .post-detail-header { padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); }
+
+    .detail-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .back-btn {
+      font-family: sans-serif; font-size: 0.8rem; color: var(--muted);
+      background: none; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0; transition: color 0.15s;
+    }
+    .back-btn::before { content: '←'; }
+    .back-btn:hover { color: var(--accent); }
+
+    .btn-edit {
+      font-family: sans-serif; font-size: 0.8rem; font-weight: 600;
+      color: var(--accent); background: var(--accent-light);
+      border: 1px solid #bfdbfe; border-radius: 6px;
+      padding: 0.4rem 1rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-edit:hover { background: #dbeafe; }
+
+    .post-detail-meta {
+      font-family: sans-serif; font-size: 0.8rem; color: var(--muted);
+      margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;
+    }
+
+    .post-detail-title {
+      font-size: 1.75rem; line-height: 1.3; margin-bottom: 0;
+    }
+
+    .post-detail-body { padding: 2.5rem 0 4rem; }
+
+    .post-content h1 { font-size: 1.4rem; margin: 2rem 0 0.8rem; }
+    .post-content h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; }
+    .post-content h3 { font-size: 1.05rem; margin: 1.5rem 0 0.6rem; }
+    .post-content p { margin-bottom: 1.25rem; line-height: 1.8; }
+    .post-content p:last-child { margin-bottom: 0; }
+    .post-content ul, .post-content ol { margin: 0 0 1.25rem 1.5rem; }
+    .post-content li { margin-bottom: 0.3rem; line-height: 1.7; }
+    .post-content code {
+      font-family: var(--mono); font-size: 0.875em;
+      background: #f5f5f4; padding: 0.15em 0.4em;
+      border-radius: 3px; color: #c2410c;
+    }
+    .post-content pre {
+      background: #1c1917; color: #e7e5e4; border-radius: 8px;
+      padding: 1.25rem 1.5rem; overflow-x: auto; margin-bottom: 1.5rem;
+    }
+    .post-content pre code {
+      background: none; color: inherit; padding: 0; font-size: 0.875rem;
+    }
+    .post-content strong { font-weight: 700; }
+    .post-content em { font-style: italic; }
+    .post-content blockquote {
+      border-left: 3px solid var(--border); padding-left: 1.25rem;
+      color: var(--muted); margin: 1.25rem 0; font-style: italic;
+    }
+    .post-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    /* ── Write page ── */
+    #view-write { display: none; }
+
+    .write-header { padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); }
+    .write-header h2 {
+      font-size: 1.4rem; font-weight: normal;
+    }
+    .write-header p { font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; font-family: sans-serif; }
+
+    .write-form { padding: 2.5rem 0 4rem; }
+
+    .form-group { margin-bottom: 1.75rem; }
+    .form-group label {
+      display: block; font-family: sans-serif; font-size: 0.75rem;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.6rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      line-height: 1.6;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      resize: vertical;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .form-group input#post-title { font-size: 1.2rem; font-weight: normal; }
+
+    .form-group textarea#post-content { min-height: 420px; font-family: var(--mono); font-size: 0.9rem; line-height: 1.7; }
+
+    .format-hint {
+      font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+      margin-top: 0.5rem; line-height: 1.8;
+    }
+
+    .form-actions { display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; }
+
+    .btn-publish {
+      font-family: sans-serif; font-size: 0.9rem; font-weight: 600;
+      color: var(--surface); background: var(--accent);
+      border: none; border-radius: 6px;
+      padding: 0.65rem 1.5rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-publish:hover { background: #1d4ed8; }
+
+    .btn-cancel {
+      font-family: sans-serif; font-size: 0.9rem;
+      color: var(--muted); background: none;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.65rem 1.25rem; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 2.5rem 0; text-align: center;
+      font-family: sans-serif; font-size: 0.8rem; color: var(--muted);
+    }
+
+    /* ── Empty state ── */
+    .empty-posts {
+      text-align: center; padding: 3rem 0;
+      font-family: sans-serif; font-size: 0.95rem; color: var(--muted);
+    }
+    .empty-posts p { margin-bottom: 1rem; }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .header-right { width: 100%; justify-content: space-between; }
+      section { padding: 3rem 0; }
+      .post-detail-title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="header-title">
+          <h1 onclick="navigate('home')">Willow Kim</h1>
+          <p>Aspiring Software Developer &mdash; documenting the journey</p>
+        </div>
+        <div class="header-right">
+          <nav>
+            <a href="#" onclick="navigate('home'); return false;">About</a>
+            <a href="#" onclick="navigate('home'); return false;">Blog</a>
+          </nav>
+          <a class="btn-write" href="write.html">+ New Post</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── View: Home ── -->
+  <div id="view-home">
+    <main>
+      <section id="about">
+        <div class="container">
+          <h2>About</h2>
+          <p>
+            Software Development student (Higher Diploma, NFQ Level 8). Motivated
+            developer with a strong foundation in Java, Python, and Object-Oriented
+            Programming.
+          </p>
+          <p>
+            Transitioning from a successful career in corporate investor relations,
+            bringing a unique blend of technical aptitude and professional maturity.
+            Recently focused on integrating AI &amp; LLM solutions &mdash; including RAG,
+            Vector Search, and Prompt Engineering &mdash; to build intelligent and scalable
+            applications.
+          </p>
+          <p>
+            A proactive problem-solver dedicated to leveraging cutting-edge AI
+            technologies and clean code practices to deliver high-impact software
+            solutions.
+          </p>
+          <div class="tag-list">
+            <span class="tag">Java</span>
+            <span class="tag">Python</span>
+            <span class="tag">OOP</span>
+            <span class="tag">RAG</span>
+            <span class="tag">Vector Search</span>
+            <span class="tag">Prompt Engineering</span>
+            <span class="tag">AWS</span>
+            <span class="tag">Linux</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="blog">
+        <div class="container">
+          <h2>Blog</h2>
+          <div class="post-list" id="post-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ── View: Post Detail ── -->
+  <div id="view-post">
+    <main>
+      <div class="post-detail-header">
+        <div class="container">
+          <div class="detail-nav">
+            <button class="back-btn" onclick="navigate('home')">Back to Blog</button>
+            <button class="btn-edit" id="btn-edit" onclick="editCurrentPost()">Edit</button>
+          </div>
+          <div class="post-detail-meta">
+            <span class="post-category" id="detail-category"></span>
+            <span id="detail-date"></span>
+          </div>
+          <h1 class="post-detail-title" id="detail-title"></h1>
+        </div>
+      </div>
+      <div class="post-detail-body">
+        <div class="container">
+          <div class="post-content" id="detail-content"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ── View: Write ── -->
+  <div id="view-write">
+    <main>
+      <div class="write-header">
+        <div class="container">
+          <button class="back-btn" onclick="navigate('home')">Back to Blog</button>
+          <h2>New Post</h2>
+          <p>Write in plain text. Use Markdown-style formatting for headings and emphasis.</p>
+        </div>
+      </div>
+      <div class="write-form">
+        <div class="container">
+          <div class="form-group">
+            <label for="post-title">Title</label>
+            <input type="text" id="post-title" placeholder="Enter post title…" />
+          </div>
+          <div class="form-group">
+            <label for="post-category">Category</label>
+            <input type="text" id="post-category" placeholder="e.g. AWS · DevOps" />
+          </div>
+          <div class="form-group">
+            <label for="post-content">Content</label>
+            <textarea id="post-content" placeholder="Write your post here…"></textarea>
+            <div class="format-hint">
+              ## Heading 2 &nbsp;|&nbsp; ### Heading 3 &nbsp;|&nbsp; **bold** &nbsp;|&nbsp; *italic* &nbsp;|&nbsp; `code` &nbsp;|&nbsp; - list item &nbsp;|&nbsp; > blockquote
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-publish" onclick="publishPost()">Publish</button>
+            <button class="btn-cancel" onclick="navigate('home')">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Willow Kim &mdash; Built with plain HTML &amp; CSS</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Default posts ──────────────────────────────────────────────
+    const DEFAULT_POSTS = [
+      {
+        id: '1',
+        title: 'Setting Up a Web Server on AWS EC2 with Nginx',
+        category: 'AWS · DevOps',
+        date: '2026-03-15',
+        content: `## Overview
+
+In this post I'll walk through everything I did to get a working web server running on AWS EC2 with Nginx. This was my first real hands-on AWS project and I learned a lot, especially from the mistakes.
+
+## Step 1: Launch an EC2 Instance
+
+Log in to the AWS Management Console and navigate to **EC2 > Instances > Launch Instance**.
+
+- Choose **Ubuntu 22.04 LTS** as the AMI
+- Select **t2.micro** (free tier eligible)
+- Create a new key pair and download the \`.pem\` file — keep this safe, you can't re-download it
+- Under **Network settings**, allow SSH (port 22) and HTTP (port 80)
+
+## Step 2: Connect via SSH
+
+Once the instance is running, copy the Public IPv4 address. Then from your terminal:
+
+\`\`\`
+chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@<PUBLIC_IP>
+\`\`\`
+
+## Step 3: Install Nginx
+
+Once connected, update the package list and install Nginx:
+
+\`\`\`
+sudo apt update
+sudo apt install nginx -y
+\`\`\`
+
+Start and enable Nginx so it runs on boot:
+
+\`\`\`
+sudo systemctl start nginx
+sudo systemctl enable nginx
+\`\`\`
+
+Visit \`http://<PUBLIC_IP>\` in your browser — you should see the Nginx welcome page.
+
+## Gotchas I Hit
+
+- **Security Group rules**: I initially forgot to add an inbound rule for HTTP (port 80). The instance was running but the browser just timed out. Always double-check your Security Group.
+- **Key pair permissions**: SSH refused to connect until I ran \`chmod 400\` on the \`.pem\` file. Permissions matter on Linux.
+- **Public IP changes on restart**: Free-tier EC2 instances get a new public IP every time you stop and start them. For a permanent address, look into **Elastic IPs**.
+
+## Next Steps
+
+- Configure Nginx to serve a custom HTML page
+- Point a domain name to the instance using Route 53
+- Set up HTTPS with Let's Encrypt (Certbot)
+
+Overall this was a great intro to AWS. The console can be overwhelming at first but once you know where things are it flows pretty naturally.`
+      },
+      {
+        id: '2',
+        title: "What is Linux and Ubuntu? A Beginner's Notes",
+        category: 'Linux · Fundamentals',
+        date: '2026-02-20',
+        content: `## What is Linux?
+
+Linux is an open-source **operating system kernel** created by Linus Torvalds in 1991. A kernel is the core of an OS — it manages hardware resources (CPU, memory, storage) and lets software programs talk to the hardware.
+
+Unlike Windows or macOS, Linux is free and open-source. Anyone can read its source code, modify it, and distribute it.
+
+## What is Ubuntu?
+
+Ubuntu is a **Linux distribution** (or "distro") — a complete operating system built on top of the Linux kernel. It bundles the kernel together with:
+
+- A package manager (\`apt\`) for installing software
+- A desktop environment (GNOME by default)
+- Pre-installed utilities and tools
+
+Ubuntu is one of the most beginner-friendly distros and is widely used on servers (including most cloud platforms like AWS and GCP).
+
+## Key Concepts I Needed to Learn
+
+### The File System
+
+Linux uses a single directory tree starting at \`/\` (root). There are no drive letters like \`C:\`. Key directories:
+
+- \`/home\` — user home directories
+- \`/etc\` — system configuration files
+- \`/var\` — variable data (logs, databases)
+- \`/usr\` — user-installed programs
+- \`/tmp\` — temporary files (cleared on reboot)
+
+### Permissions
+
+Every file has an **owner** and **group**, plus permission bits for read (\`r\`), write (\`w\`), and execute (\`x\`). The output of \`ls -l\` shows these:
+
+\`\`\`
+-rw-r--r-- 1 ubuntu ubuntu 1234 Mar 01 10:00 myfile.txt
+\`\`\`
+
+Three groups: owner / group / others. \`chmod\` changes permissions, \`chown\` changes ownership.
+
+### Package Management with apt
+
+\`apt\` is Ubuntu's package manager. The commands I use most:
+
+\`\`\`
+sudo apt update          # refresh package list
+sudo apt install <pkg>   # install a package
+sudo apt upgrade         # upgrade installed packages
+sudo apt remove <pkg>    # remove a package
+\`\`\`
+
+### Processes
+
+- \`ps aux\` — list all running processes
+- \`top\` / \`htop\` — real-time process monitor
+- \`kill <PID>\` — stop a process by its ID
+- \`systemctl status nginx\` — check if a service is running
+
+## Why This Matters for Cloud / DevOps
+
+Almost all cloud servers run Linux. Understanding the file system, permissions, and the terminal is non-negotiable for deploying applications. Starting to feel more comfortable in the terminal has made everything else — EC2, Docker, CI/CD — much less intimidating.`
+      }
+    ];
+
+    // ── Storage ────────────────────────────────────────────────────
+    function loadPosts() {
+      try {
+        const stored = localStorage.getItem('blog_posts');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          // Merge: ensure default posts are always present by id
+          const ids = new Set(parsed.map(p => p.id));
+          const merged = [
+            ...DEFAULT_POSTS.filter(p => !ids.has(p.id)),
+            ...parsed,
+          ];
+          if (merged.length !== parsed.length) savePosts(merged);
+          return merged;
+        }
+      } catch (e) {}
+      // First visit: persist defaults so write.html can find them
+      savePosts(DEFAULT_POSTS);
+      return DEFAULT_POSTS;
+    }
+
+    function savePosts(posts) {
+      localStorage.setItem('blog_posts', JSON.stringify(posts));
+    }
+
+    let posts = loadPosts();
+
+    // ── Routing ────────────────────────────────────────────────────
+    let currentView = 'home';
+    let currentPostId = null;
+
+    function navigate(view, postId) {
+      const views = ['view-home', 'view-post', 'view-write'];
+      views.forEach(v => document.getElementById(v).style.display = 'none');
+
+      if (view === 'home') {
+        document.getElementById('view-home').style.display = 'block';
+        renderPostList();
+        window.scrollTo(0, 0);
+      } else if (view === 'post' && postId) {
+        const post = posts.find(p => p.id === postId);
+        if (!post) { navigate('home'); return; }
+        renderPostDetail(post);
+        document.getElementById('view-post').style.display = 'block';
+        window.scrollTo(0, 0);
+      } else if (view === 'write') {
+        resetWriteForm();
+        document.getElementById('view-write').style.display = 'block';
+        window.scrollTo(0, 0);
+      }
+
+      currentView = view;
+      currentPostId = postId || null;
+    }
+
+    // ── Render post list ───────────────────────────────────────────
+    function getSummary(content) {
+      const plain = content.replace(/^#{1,3}\s+.*/gm, '').replace(/[*`_>#-]/g, '').trim();
+      const first = plain.split('\n').filter(l => l.trim().length > 0)[0] || '';
+      return first.length > 160 ? first.slice(0, 157) + '…' : first;
+    }
+
+    function formatDate(dateStr) {
+      try {
+        return new Date(dateStr).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (e) { return dateStr; }
+    }
+
+    function renderPostList() {
+      const container = document.getElementById('post-list');
+      if (!posts.length) {
+        container.innerHTML = '<div class="empty-posts"><p>No posts yet.</p></div>';
+        return;
+      }
+      const sorted = [...posts].reverse();
+      container.innerHTML = sorted.map(post => `
+        <article class="post-card" onclick="navigate('post', '${escAttr(post.id)}')">
+          <div class="post-meta">
+            <span class="post-category">${escHtml(post.category)}</span>
+            <span>${formatDate(post.date)}</span>
+          </div>
+          <h3><a href="#" onclick="navigate('post','${escAttr(post.id)}'); return false;">${escHtml(post.title)}</a></h3>
+          <p>${escHtml(getSummary(post.content))}</p>
+          <span class="read-more">Read post</span>
+        </article>
+      `).join('');
+    }
+
+    // ── Render post detail ─────────────────────────────────────────
+    function renderPostDetail(post) {
+      document.getElementById('detail-category').textContent = post.category;
+      document.getElementById('detail-date').textContent = formatDate(post.date);
+      document.getElementById('detail-title').textContent = post.title;
+      document.getElementById('detail-content').innerHTML = renderMarkdown(post.content);
+    }
+
+    // ── Markdown renderer ──────────────────────────────────────────
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function escAttr(str) {
+      return String(str).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    }
+
+    function inlineFormat(text) {
+      return escHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+
+    function renderMarkdown(text) {
+      const lines = text.split('\n');
+      const blocks = [];
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+
+        // Fenced code block
+        if (line.startsWith('```')) {
+          const lang = line.slice(3).trim();
+          const codeLines = [];
+          i++;
+          while (i < lines.length && !lines[i].startsWith('```')) {
+            codeLines.push(escHtml(lines[i]));
+            i++;
+          }
+          blocks.push(`<pre><code>${codeLines.join('\n')}</code></pre>`);
+          i++;
+          continue;
+        }
+
+        // Headings
+        if (line.startsWith('### ')) { blocks.push(`<h3>${inlineFormat(line.slice(4))}</h3>`); i++; continue; }
+        if (line.startsWith('## '))  { blocks.push(`<h2>${inlineFormat(line.slice(3))}</h2>`); i++; continue; }
+        if (line.startsWith('# '))   { blocks.push(`<h1>${inlineFormat(line.slice(2))}</h1>`); i++; continue; }
+
+        // Horizontal rule
+        if (line.match(/^[-*_]{3,}$/)) { blocks.push('<hr>'); i++; continue; }
+
+        // Blockquote
+        if (line.startsWith('> ')) {
+          const quoteLines = [];
+          while (i < lines.length && lines[i].startsWith('> ')) {
+            quoteLines.push(inlineFormat(lines[i].slice(2)));
+            i++;
+          }
+          blocks.push(`<blockquote><p>${quoteLines.join('<br>')}</p></blockquote>`);
+          continue;
+        }
+
+        // Unordered list
+        if (line.match(/^[-*] /)) {
+          const items = [];
+          while (i < lines.length && lines[i].match(/^[-*] /)) {
+            items.push(`<li>${inlineFormat(lines[i].slice(2))}</li>`);
+            i++;
+          }
+          blocks.push(`<ul>${items.join('')}</ul>`);
+          continue;
+        }
+
+        // Ordered list
+        if (line.match(/^\d+\. /)) {
+          const items = [];
+          while (i < lines.length && lines[i].match(/^\d+\. /)) {
+            items.push(`<li>${inlineFormat(lines[i].replace(/^\d+\. /, ''))}</li>`);
+            i++;
+          }
+          blocks.push(`<ol>${items.join('')}</ol>`);
+          continue;
+        }
+
+        // Blank line — skip
+        if (line.trim() === '') { i++; continue; }
+
+        // Paragraph: collect until blank line or special block
+        const paraLines = [];
+        while (i < lines.length && lines[i].trim() !== '' &&
+          !lines[i].match(/^#{1,3} /) &&
+          !lines[i].startsWith('```') &&
+          !lines[i].startsWith('> ') &&
+          !lines[i].match(/^[-*] /) &&
+          !lines[i].match(/^\d+\. /) &&
+          !lines[i].match(/^[-*_]{3,}$/)) {
+          paraLines.push(inlineFormat(lines[i]));
+          i++;
+        }
+        if (paraLines.length) blocks.push(`<p>${paraLines.join(' ')}</p>`);
+      }
+
+      return blocks.join('\n');
+    }
+
+    // ── Write / Publish ────────────────────────────────────────────
+    function resetWriteForm() {
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-category').value = '';
+      document.getElementById('post-content').value = '';
+    }
+
+    function publishPost() {
+      const title = document.getElementById('post-title').value.trim();
+      const category = document.getElementById('post-category').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+
+      if (!title) { alert('Please enter a title.'); document.getElementById('post-title').focus(); return; }
+      if (!content) { alert('Please write some content.'); document.getElementById('post-content').focus(); return; }
+
+      const newPost = {
+        id: String(Date.now()),
+        title,
+        category: category || 'General',
+        date: new Date().toISOString().slice(0, 10),
+        content
+      };
+
+      posts.push(newPost);
+      savePosts(posts);
+      navigate('post', newPost.id);
+    }
+
+    function editCurrentPost() {
+      if (currentPostId) {
+        window.location.href = 'write.html?id=' + encodeURIComponent(currentPostId);
+      }
+    }
+
+    // ── Init: support #post-{id} hash from write.html redirect ───
+    function init() {
+      const hash = window.location.hash;
+      if (hash.startsWith('#post-')) {
+        const id = hash.replace('#post-', '');
+        navigate('post', id);
+      } else {
+        navigate('home');
+      }
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
